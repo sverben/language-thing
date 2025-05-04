@@ -7,6 +7,8 @@ export const cardSchema = z.object({
 
 export const createListSchema = z.object({
     name: z.string().min(3),
+    languageA: z.string(),
+    languageB: z.string(),
     cards: z.array(cardSchema),
 })
 

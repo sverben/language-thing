@@ -10,6 +10,8 @@ export default defineSchema({
     lists: defineTable({
         owner: v.string(),
         name: v.string(),
+        languageA: v.string(),
+        languageB: v.string(),
         cards: v.array(card)
     }),
     learnSessions: defineTable({

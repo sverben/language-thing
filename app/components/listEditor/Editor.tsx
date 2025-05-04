@@ -9,6 +9,8 @@ import CardsInput from "@/components/listEditor/CardsInput";
 import ImportCards from "@/components/listEditor/ImportCards";
 import {useNavigate} from "react-router";
 import { api } from "convex/_generated/api";
+import LanguageSelector from "@/components/LanguageSelector";
+import {Card, CardContent} from "@/components/ui/card";
 
 export default function Create({ defaults, submit, action }: { defaults?: typeof createListSchema._type, submit: (data: typeof createListSchema._type) => Promise<void>, action: string }) {
     const form = useForm({
@@ -42,7 +44,30 @@ export default function Create({ defaults, submit, action }: { defaults?: typeof
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Cards</FormLabel>
-                            <ImportCards {...field} />
+                            <Card>
+                                <CardContent className={"flex flex-col gap-4"}>
+                                    <div className={"flex gap-4"}>
+                                        {["languageA", "languageB"].map(name => (
+                                            <FormField
+                                                control={form.control}
+                                                key={name}
+                                                name={name as "languageA" | "languageB"}
+                                                render={({ field }) => (
+                                                    <FormItem className={"flex-1"}>
+                                                        <FormLabel>Select language</FormLabel>
+                                                        <FormControl>
+                                                            <LanguageSelector value={field.value} onChange={field.onChange} />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        ))}
+                                    </div>
+                                    <ImportCards {...field} />
+                                </CardContent>
+                            </Card>
+
                             <FormControl>
                                 <CardsInput {...field} />
                             </FormControl>

@@ -36,7 +36,9 @@ export const create = zodMutation({
         await ctx.db.insert("lists", {
             owner: identity.subject,
             name: args.name,
-            cards: args.cards.filter(card => card.wordA || card.wordB)
+            cards: args.cards.filter(card => card.wordA || card.wordB),
+            languageA: args.languageA,
+            languageB: args.languageB
         })
     }
 })
