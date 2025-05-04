@@ -5,16 +5,17 @@ import {type JSX, useEffect, useMemo, useRef, useState} from "react";
 import {Card, CardContent} from "@/components/ui/card";
 import type {FunctionReturnType} from "convex/server";
 import type {cardSchema} from "@shared/schemas";
-import Show from "@/components/learnRounds/Show";
 import { shuffleArray } from "@/lib/utils";
 import type {Props} from "@/components/learnRounds/types";
+import Write from "@/components/learnRounds/Write";
 import Choose from "@/components/learnRounds/Choose";
+import Show from "@/components/learnRounds/Show";
 
 type Card = typeof cardSchema._type
 type Component = ({ card, answer }: Props) => JSX.Element;
 
 const MAX_CONCURRENT_WORDS = 6
-const ROUNDS: Component[] = [Show, Choose]
+const ROUNDS: Component[] = [Show, Choose, Write]
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -71,7 +72,7 @@ function LearnTrack({ list }: { list: FunctionReturnType<typeof api.lists.get> &
     }
 
     return (
-        <Card className={"w-full max-w-2xl min-h-3/12 fixed top-1/2 left-1/2 -translate-1/2 justify-center"}>
+        <Card className={"overflow-hidden w-full max-w-2xl min-h-3/12 fixed top-1/2 left-1/2 -translate-1/2 justify-center"}>
             <CardContent className={"text-center"}>
                 {rounds[0].round >= 0 && Component && <Component cards={list.cards} card={(rounds[0] as DefinedRound).card} answer={answer} />}
             </CardContent>
