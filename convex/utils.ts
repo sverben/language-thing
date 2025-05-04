@@ -15,3 +15,10 @@ export async function ensureIdentity(ctx: GenericQueryCtx<any>) {
 
     return identity
 }
+
+export function shuffleArray<Type>(array: Type[]): Type[] {
+    return array
+        .map(value => ({ value, sort: Math.random() }))
+        .sort((a, b) => a.sort - b.sort)
+        .map(({ value }) => value)
+}
