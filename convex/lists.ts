@@ -1,6 +1,6 @@
 import {query} from "./_generated/server";
 import {ensureIdentity, zodMutation} from "./utils";
-import {createListSchema} from "@shared/schemas";
+import {createListSchema, updateListSchema} from "@shared/schemas";
 import {v} from "convex/values";
 
 export const getAll = query({
@@ -34,6 +34,24 @@ export const create = zodMutation({
         const identity = await ensureIdentity(ctx)
 
         await ctx.db.insert("lists", {
+            owner: identity.subject,
+            name: args.name,
+            cards: args.cards.filter(card => card.wordA || card.wordB)
+        })
+    }
+})
+
+export const update = zodMutation({
+    args: updateListSchema,
+    handler: async (ctx, args) => {
+        const identity = await ensureIdentity(ctx)
+
+        const list = await ctx.db.query("lists")
+            .filter(q => q.and(q.eq(q.field("_id"), args.id), q.eq(q.field("owner"), identity.subject)))
+            .first()
+        if (!list) throw new Error("List not found")
+
+        await ctx.db.patch(list._id, {
             owner: identity.subject,
             name: args.name,
             cards: args.cards.filter(card => card.wordA || card.wordB)

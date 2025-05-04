@@ -6,6 +6,7 @@ export default [
 
     ...prefix("lists/:id", [
         index("routes/lists/list.tsx"),
-        route("learn", "routes/lists/learn.tsx")
+        route("learn", "routes/lists/learn.tsx"),
+        route("edit", "routes/lists/edit.tsx"),
     ])
 ] satisfies RouteConfig;

@@ -10,6 +10,7 @@ import {Button} from "@/components/ui/button";
 import CardsInput from "@/components/listEditor/CardsInput";
 import ImportCards from "@/components/listEditor/ImportCards";
 import {useNavigate} from "react-router";
+import Editor from "@/components/listEditor/Editor";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -21,13 +22,6 @@ export function meta({}: Route.MetaArgs) {
 export default function Create() {
     const createList = useMutation(api.lists.create);
     const navigate = useNavigate();
-    const form = useForm({
-        resolver: zodResolver(createListSchema),
-        defaultValues: {
-            name: '',
-            cards: new Array(10).fill(null).map(() => ({ wordA: '', wordB: '' })),
-        }
-    })
 
     async function submit(data: typeof createListSchema._type) {
         await createList(data)
@@ -35,39 +29,6 @@ export default function Create() {
     }
 
     return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(submit)} className={"space-y-8"}>
-                <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>List name</FormLabel>
-                            <FormControl>
-                                <Input placeholder={"Give your list a name"} {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
-                <FormField
-                    control={form.control}
-                    name="cards"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Cards</FormLabel>
-                            <ImportCards {...field} />
-                            <FormControl>
-                                <CardsInput {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
-                <Button type="submit">Create</Button>
-            </form>
-        </Form>
+        <Editor submit={submit} action={'Create'} />
     )
 }

@@ -16,7 +16,7 @@ import {Label} from "@/components/ui/label";
 import {Button} from "@/components/ui/button";
 import {Link} from "react-router";
 import {Separator} from "@/components/ui/separator";
-import {Play} from "lucide-react";
+import {Edit, Pen, Play} from "lucide-react";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -60,6 +60,9 @@ export default function List({ params }: Route.ComponentProps) {
                 <div className={"flex gap-2"}>
                     <Link to={"learn"}>
                         <Button><Play /> Practice all words</Button>
+                    </Link>
+                    <Link to={"edit"}>
+                        <Button><Pen /></Button>
                     </Link>
                 </div>
             </div>
