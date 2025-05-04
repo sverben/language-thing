@@ -18,6 +18,9 @@ export default defineSchema({
         list: v.id("lists"),
         owner: v.string(),
 
+        languageA: v.string(),
+        languageB: v.string(),
+
         allCards: v.array(card),
         remaining: v.array(card),
         rounds: v.array(
@@ -33,6 +36,7 @@ export default defineSchema({
             )
         ),
 
-        enabledRoundTypes: v.array(v.string())
+        enabledRoundTypes: v.array(v.string()),
+        answerIn: v.union(v.literal("a"), v.literal("b")),
     })
 })

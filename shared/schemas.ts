@@ -17,7 +17,8 @@ export const updateListSchema = createListSchema.extend({
 })
 
 export const settingsSchema = z.object({
-    enabledRoundTypes: z.array(z.string())
+    enabledRoundTypes: z.array(z.string()),
+    answerIn: z.enum(["a", "b"])
 })
 
 export const updateSettingsSchema = settingsSchema.extend({

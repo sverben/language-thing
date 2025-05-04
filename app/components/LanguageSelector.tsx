@@ -18,25 +18,30 @@ import {
 } from "@/components/ui/popover"
 import CountryFlagSvg from "country-list-with-dial-code-and-flag/dist/flag-svg";
 
-const languages = [
+export const languages = [
     {
         value: "NL",
+        code: "NL",
         label: "Dutch",
     },
     {
         value: "DE",
+        code: "DE",
         label: "German",
     },
     {
         value: "FR",
+        code: "FR",
         label: "French",
     },
     {
         value: "GB",
+        code: "GB",
         label: "English",
     },
     {
         value: "ES",
+        code: "ES",
         label: "Spanish",
     }
 ]
@@ -45,17 +50,17 @@ export function getLanguageIcon(language: string) {
     return `data:image/svg+xml;utf8,${encodeURIComponent(CountryFlagSvg[language])}`
 }
 
-function LanguageRender({ language }: { language?: { value: string, label: string } }) {
+function LanguageRender({ language }: { language?: { value: string, label: string, code: string } }) {
     if (!language) return
     return (
         <div className={"flex gap-2"}>
-            <img className={"aspect-square rounded-full h-5 object-cover"} src={getLanguageIcon(language.value)} />
+            <img className={"aspect-square rounded-full h-5 object-cover"} src={getLanguageIcon(language.code)} />
             {language.label}
         </div>
     )
 }
 
-export default function LanguageSelector({ value, onChange }: { value: string, onChange: (value: string) => void }) {
+export default function LanguageSelector({ value, onChange, options = languages }: { value: string, onChange: (value: string) => void, options?: { value: string, label: string, code: string }[] }) {
     const [open, setOpen] = React.useState(false)
 
     return (
@@ -68,7 +73,7 @@ export default function LanguageSelector({ value, onChange }: { value: string, o
                     className="justify-between"
                 >
                     {value
-                        ? <LanguageRender language={languages.find((language) => language.value === value)} />
+                        ? <LanguageRender language={options.find((language) => language.value === value)} />
                         : "Select language..."}
                     <ChevronsUpDown className="opacity-50" />
                 </Button>
@@ -79,7 +84,7 @@ export default function LanguageSelector({ value, onChange }: { value: string, o
                     <CommandList>
                         <CommandEmpty>No language found.</CommandEmpty>
                         <CommandGroup>
-                            {languages.map((language) => (
+                            {options.map((language) => (
                                 <CommandItem
                                     key={language.value}
                                     value={language.label}

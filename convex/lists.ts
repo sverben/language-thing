@@ -56,7 +56,9 @@ export const update = zodMutation({
         await ctx.db.patch(list._id, {
             owner: identity.subject,
             name: args.name,
-            cards: args.cards.filter(card => card.wordA || card.wordB)
+            cards: args.cards.filter(card => card.wordA || card.wordB),
+            languageA: args.languageA,
+            languageB: args.languageB
         })
     }
 })

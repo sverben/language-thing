@@ -23,7 +23,7 @@ export default function Home() {
               <Card>
                 <CardHeader className={"flex gap-4 items-center"}>
                   <div className={"flex gap-2 items-center"}>
-                    <img className={"aspect-square rounded-full h-8 object-cover"} src={getLanguageIcon(list.languageB)} alt=""/>
+                    <img className={"aspect-square rounded-full h-8 object-cover"} src={getLanguageIcon(list.languageB)} alt="" />
                   </div>
                   <div className={"flex flex-col gap-2"}>
                     <CardTitle>{list.name}</CardTitle>

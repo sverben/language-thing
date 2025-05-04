@@ -23,6 +23,7 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import type {FunctionReturnType} from "convex/server";
 import {Checkbox} from "@/components/ui/checkbox";
+import LanguageSelector, {languages} from "@/components/LanguageSelector";
 
 type Card = typeof cardSchema._type
 type Component = ({ card, answer }: Props) => JSX.Element;
@@ -90,6 +91,26 @@ function Settings({ session }: { session: FunctionReturnType<typeof api.learnSes
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(submit)}>
                         <div className={"space-y-8"}>
+                            <FormField
+                                control={form.control}
+                                name={"answerIn"}
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Answer in</FormLabel>
+                                        <FormControl>
+                                            <LanguageSelector
+                                                value={field.value}
+                                                onChange={field.onChange}
+                                                options={[
+                                                    { ...languages.find(ln => ln.value === session.languageA)!, value: 'a' },
+                                                    { ...languages.find(ln => ln.value === session.languageB)!, value: 'b' }
+                                                ]}
+                                            />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+
                             <FormField
                                 control={form.control}
                                 name="enabledRoundTypes"

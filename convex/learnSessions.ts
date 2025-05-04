@@ -35,6 +35,12 @@ export const queue = internalMutation({
             const next = session.remaining.shift()
             if (!next) continue
 
+            if (session.answerIn === 'a') {
+                const previousA = next.wordA
+                next.wordA = next.wordB
+                next.wordB = previousA
+            }
+
             session.rounds.push({
                 kind: "item",
                 round: 0,
@@ -74,10 +80,15 @@ export const create = mutation({
             list: list._id,
             owner: identity.subject,
 
+            languageA: list.languageA,
+            languageB: list.languageB,
+
             allCards: list.cards,
             remaining: shuffleArray(list.cards),
             rounds: [],
-            enabledRoundTypes: ['show', 'choose', 'hints', 'write']
+
+            enabledRoundTypes: ['show', 'choose', 'hints', 'write'],
+            answerIn: 'b'
         })
         await ctx.runMutation(internal.learnSessions.queue, ({ session }))
 
@@ -94,7 +105,8 @@ export const updateSettings = zodMutation({
             remaining: shuffleArray(session.allCards),
             rounds: [],
 
-            enabledRoundTypes: args.enabledRoundTypes
+            enabledRoundTypes: args.enabledRoundTypes,
+            answerIn: args.answerIn
         })
         await ctx.runMutation(internal.learnSessions.queue, ({ session: session._id }))
     }
