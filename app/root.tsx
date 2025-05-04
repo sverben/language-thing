@@ -51,7 +51,9 @@ export default function App() {
           <Authenticated>
             <div className={'flex flex-col'}>
               <NavBar />
-              <Outlet />
+              <main className={'p-4 w-full max-w-7xl mx-auto'}>
+                <Outlet />
+              </main>
             </div>
           </Authenticated>
           <AuthLoading>

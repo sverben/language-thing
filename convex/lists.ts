@@ -18,9 +18,10 @@ export const create = zodMutation({
     handler: async (ctx, args) => {
         const identity = await ensureIdentity(ctx)
 
-        await ctx.db.insert("lists", {
+        const id = await ctx.db.insert("lists", {
             owner: identity.subject,
-            name: args.name
+            name: args.name,
+            cards: args.cards
         })
     }
 })
