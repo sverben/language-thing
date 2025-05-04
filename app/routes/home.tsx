@@ -1,5 +1,6 @@
 import type { Route } from "./+types/home";
-import { Welcome } from "../welcome/welcome";
+import {useQuery} from "convex/react";
+import {api} from "../../convex/_generated/api";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -9,5 +10,12 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-  return <Welcome />;
+  const tests = useQuery(api.tests.get)
+  return (
+      <div>
+        {tests?.map(test => (
+            <div>{test.name}</div>
+        ))}
+      </div>
+  );
 }
