@@ -64,6 +64,11 @@ export const create = mutation({
             .first()
         if (!list) throw new Error("List not found")
 
+        const existingSession = await ctx.db.query("learnSessions")
+            .filter(q => q.and(q.eq(q.field("owner"), identity.subject), q.eq(q.field("list"), list._id)))
+            .first()
+        if (existingSession) await ctx.db.delete(existingSession._id)
+
         const session = await ctx.db.insert("learnSessions", {
             list: list._id,
             owner: identity.subject,
