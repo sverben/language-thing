@@ -1,32 +1,30 @@
-import { v } from "convex/values";
-import {internalMutation, internalQuery, mutation, query} from "./_generated/server";
-import {api, internal} from "./_generated/api";
+import {v} from "convex/values";
+import {internalMutation, mutation, query} from "./_generated/server";
+import {internal} from "./_generated/api";
 import {ensureIdentity, shuffleArray} from "./utils";
+import type {GenericMutationCtx} from "convex/server";
+import type {DataModel} from "./_generated/dataModel";
 
 const MAX_CURRENT = 6
 
-export const getSession = internalQuery({
-    args: {
-        session: v.string()
-    },
-    async handler(ctx, args) {
-        const identity = await ensureIdentity(ctx)
+type CTX = GenericMutationCtx<DataModel>
+async function getSession(ctx: CTX, session: string) {
+    const identity = await ensureIdentity(ctx)
 
-        const session = await ctx.db.query("learnSessions")
-            .filter(q => q.and(q.eq(q.field("owner"), identity.subject), q.eq(q.field("_id"), args.session)))
-            .first()
-        if (!session) throw new Error("Session not found!")
+    const current = await ctx.db.query("learnSessions")
+        .filter(q => q.and(q.eq(q.field("owner"), identity.subject), q.eq(q.field("_id"), session)))
+        .first()
+    if (!current) throw new Error("Session not found!")
 
-        return session;
-    }
-})
+    return current;
+}
 
 export const queue = internalMutation({
     args: {
         session: v.id("learnSessions")
     },
     async handler(ctx, args) {
-        const session = await ctx.runQuery(internal.learnSessions.getSession, args)
+        const session = await getSession(ctx, args.session)
         if (session.rounds[0].kind === 'queue') {
             session.rounds.splice(0, 1)
         }
@@ -69,7 +67,8 @@ export const create = mutation({
 
             allCards: list.cards,
             remaining: shuffleArray(list.cards),
-            rounds: []
+            rounds: [],
+            enabledRoundTypes: ['show', 'choose', 'hints', 'type']
         })
         await ctx.runMutation(internal.learnSessions.queue, ({ session }))
     }
@@ -77,10 +76,10 @@ export const create = mutation({
 
 export const get = query({
     args: {
-        session: v.string()
+        id: v.string()
     },
     handler(ctx, args) {
-       return ctx.runQuery(internal.learnSessions.getSession, args)
+        return getSession(ctx as CTX, args.id)
     }
 })
 
@@ -90,7 +89,28 @@ export const next = mutation({
         correct: v.boolean()
     },
     async handler(ctx, args) {
-        const identity = await ensureIdentity(ctx)
+        const session = await getSession(ctx, args.session)
 
+        const round = session.rounds.shift()
+        if (!round) throw new Error('No round found')
+        if (round.kind !== 'item') throw new Error('Round uses invalid type')
+
+        if (!args.correct) {
+            session.rounds.push(round)
+        } else if (round.round < session.enabledRoundTypes.length - 1) {
+            session.rounds.push({
+                ...round,
+                round: round.round + 1
+            })
+        }
+
+        await ctx.db.patch(session._id, {
+            rounds: session.rounds
+        })
+        if (session.rounds[0].kind === 'queue') {
+            await ctx.runMutation(internal.learnSessions.queue, {
+                session: session._id
+            })
+        }
     }
 })

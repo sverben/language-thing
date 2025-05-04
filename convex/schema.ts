@@ -29,6 +29,8 @@ export default defineSchema({
                     kind: v.literal("queue")
                 })
             )
-        )
+        ),
+
+        enabledRoundTypes: v.array(v.string())
     })
 })
