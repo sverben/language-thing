@@ -7,7 +7,9 @@ import {useMutation} from "convex/react";
 import {api} from "../../convex/_generated/api";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import CardsInput from "@/components/CardsInput";
+import CardsInput from "@/components/listEditor/CardsInput";
+import ImportCards from "@/components/listEditor/ImportCards";
+import {useNavigate} from "react-router";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -18,6 +20,7 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Create() {
     const createList = useMutation(api.lists.create);
+    const navigate = useNavigate();
     const form = useForm({
         resolver: zodResolver(createListSchema),
         defaultValues: {
@@ -26,9 +29,14 @@ export default function Create() {
         }
     })
 
+    async function submit(data: typeof createListSchema._type) {
+        await createList(data)
+        navigate('/')
+    }
+
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(createList)} className={"space-y-8"}>
+            <form onSubmit={form.handleSubmit(submit)} className={"space-y-8"}>
                 <FormField
                     control={form.control}
                     name="name"
@@ -49,6 +57,7 @@ export default function Create() {
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Cards</FormLabel>
+                            <ImportCards {...field} />
                             <FormControl>
                                 <CardsInput {...field} />
                             </FormControl>
