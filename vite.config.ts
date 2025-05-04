@@ -8,7 +8,8 @@ export default defineConfig({
   plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
   resolve: {
     alias: {
-      '@shared': path.resolve(__dirname, './shared')
+      '@shared': path.resolve(__dirname, './shared'),
+      '@': path.resolve(__dirname, './app')
     }
   }
 });

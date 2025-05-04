@@ -1,17 +1,11 @@
-import {
-  isRouteErrorResponse,
-  Links,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-} from "react-router";
+import {isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration,} from "react-router";
 
-import type { Route } from "./+types/root";
+import type {Route} from "./+types/root";
 import "./app.css";
-import {Authenticated, AuthLoading, ConvexProvider, ConvexReactClient, Unauthenticated} from "convex/react";
-import {ClerkProvider, useAuth, SignIn, UserButton} from "@clerk/clerk-react";
+import {Authenticated, AuthLoading, ConvexReactClient, Unauthenticated} from "convex/react";
+import {ClerkProvider, SignIn, useAuth} from "@clerk/clerk-react";
 import {ConvexProviderWithClerk} from "convex/react-clerk";
+import NavBar from "@/components/NavBar";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 
@@ -55,8 +49,10 @@ export default function App() {
             <SignIn />
           </Unauthenticated>
           <Authenticated>
-            <UserButton />
-            <Outlet />
+            <div className={'flex flex-col'}>
+              <NavBar />
+              <Outlet />
+            </div>
           </Authenticated>
           <AuthLoading>
             <h1>Loading...</h1>
