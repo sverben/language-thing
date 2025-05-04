@@ -4,7 +4,7 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {Check} from "lucide-react";
 
-export default function Write({ card, answer }: Props) {
+export default function Write({ card, answer, hint }: Props & { hint?: string }) {
     const [value, setValue] = useState('')
     const [result, setResult] = useState<boolean|null>(null)
 
@@ -32,7 +32,8 @@ export default function Write({ card, answer }: Props) {
                 className={'flex flex-col gap-4'}
                 onSubmit={check}
             >
-                <Input disabled={result !== null} value={value} onChange={(e) => setValue(e.target.value)} />
+                {hint && <span className={"text-left text-2xl"}>Hint: {hint}</span>}
+                <Input autoFocus disabled={result !== null} value={value} onChange={(e) => setValue(e.target.value)} />
                 <Button disabled={result !== null} type="submit">Continue</Button>
             </form>
 

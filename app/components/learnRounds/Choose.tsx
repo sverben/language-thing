@@ -4,7 +4,7 @@ import {shuffleArray} from "@/lib/utils";
 import {Button} from "@/components/ui/button";
 
 export default function Choose({ cards, card, answer }: Props) {
-    const options = useMemo(() => shuffleArray([...shuffleArray(cards).filter(e => e.wordA !== card.wordA && e.wordB !== card.wordB), card]).slice(0, 3), [card])
+    const options = useMemo(() => shuffleArray([...shuffleArray(cards).filter(e => e.wordA !== card.wordA && e.wordB !== card.wordB).slice(0, 3), card]), [card])
     const [result, setResult] = useState<string|null>(null);
 
     function click(value: string) {

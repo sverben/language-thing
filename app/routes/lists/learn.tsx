@@ -10,12 +10,13 @@ import type {Props} from "@/components/learnRounds/types";
 import Write from "@/components/learnRounds/Write";
 import Choose from "@/components/learnRounds/Choose";
 import Show from "@/components/learnRounds/Show";
+import Hints from "@/components/learnRounds/Hints";
 
 type Card = typeof cardSchema._type
 type Component = ({ card, answer }: Props) => JSX.Element;
 
 const MAX_CONCURRENT_WORDS = 6
-const ROUNDS: Component[] = [Show, Choose, Write]
+const ROUNDS: Component[] = [Show, Choose, Hints, Write]
 
 export function meta({}: Route.MetaArgs) {
     return [
