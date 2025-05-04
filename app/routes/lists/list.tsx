@@ -1,5 +1,5 @@
 import type {Route} from "./+types/list";
-import {useQuery} from "convex/react";
+import {useMutation, useQuery} from "convex/react";
 import {api} from "../../../convex/_generated/api";
 import {
     Carousel,
@@ -14,7 +14,7 @@ import {useEffect, useMemo, useState} from "react";
 import {Switch} from "@/components/ui/switch";
 import {Label} from "@/components/ui/label";
 import {Button} from "@/components/ui/button";
-import {Link} from "react-router";
+import {Link, useNavigate} from "react-router";
 import {Separator} from "@/components/ui/separator";
 import {Edit, Pen, Play} from "lucide-react";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
@@ -34,6 +34,8 @@ function shuffleArray<Type>(array: Type[]): Type[] {
 }
 
 export default function List({ params }: Route.ComponentProps) {
+    const navigate = useNavigate();
+    const createLearningSession = useMutation(api.learnSessions.create)
     const list = useQuery(api.lists.get, { id: params.id })
     const [carouselApi, setCarouselApi] = useState<CarouselApi>()
     const [current, setCurrent] = useState<number>(0)
@@ -47,6 +49,15 @@ export default function List({ params }: Route.ComponentProps) {
             setCurrent(carouselApi.selectedScrollSnap())
         })
     }, [carouselApi]);
+
+    async function learn() {
+        const id = await createLearningSession({
+            list: params.id
+        })
+
+        navigate(`/learn/${id}`)
+    }
+
     const cards = useMemo(() => shuffle ? shuffleArray(list?.cards || []) : list?.cards || [], [list?.cards, shuffle])
 
     if (!list) return
@@ -59,9 +70,7 @@ export default function List({ params }: Route.ComponentProps) {
                     <p className={"text-neutral-600"}>{list.cards.length} words</p>
                 </div>
                 <div className={"flex gap-2"}>
-                    <Link to={"learn"}>
-                        <Button><Play /> Practice all words</Button>
-                    </Link>
+                    <Button onClick={learn}><Play /> Practice all words</Button>
                     <Link to={"edit"}>
                         <Button><Pen /></Button>
                     </Link>

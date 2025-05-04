@@ -25,7 +25,7 @@ export const queue = internalMutation({
     },
     async handler(ctx, args) {
         const session = await getSession(ctx, args.session)
-        if (session.rounds[0].kind === 'queue') {
+        if (session.rounds[0]?.kind === 'queue') {
             session.rounds.splice(0, 1)
         }
         for (let i = 0; i < 2; i++) {
@@ -41,6 +41,9 @@ export const queue = internalMutation({
             })
         }
 
+        session.rounds.push({
+            kind: "queue"
+        })
         await ctx.db.patch(args.session, {
             rounds: session.rounds,
             remaining: session.remaining
@@ -68,9 +71,11 @@ export const create = mutation({
             allCards: list.cards,
             remaining: shuffleArray(list.cards),
             rounds: [],
-            enabledRoundTypes: ['show', 'choose', 'hints', 'type']
+            enabledRoundTypes: ['show', 'choose', 'hints', 'write']
         })
         await ctx.runMutation(internal.learnSessions.queue, ({ session }))
+
+        return session
     }
 })
 
