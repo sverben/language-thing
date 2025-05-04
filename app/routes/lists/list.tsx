@@ -13,6 +13,10 @@ import WordCard from "@/components/WordCard";
 import {useEffect, useMemo, useState} from "react";
 import {Switch} from "@/components/ui/switch";
 import {Label} from "@/components/ui/label";
+import {Button} from "@/components/ui/button";
+import {Link} from "react-router";
+import {Separator} from "@/components/ui/separator";
+import {Play} from "lucide-react";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -48,13 +52,27 @@ export default function List({ params }: Route.ComponentProps) {
 
     return (
         <div className={"flex flex-col gap-4"}>
-            <div>
-                <h1 className={"text-2xl font-bold"}>{list.name}</h1>
-                <p className={"text-neutral-600"}>{list.cards.length} words</p>
+            <div className={"flex justify-between items-center"}>
+                <div>
+                    <h1 className={"text-2xl font-bold"}>{list.name}</h1>
+                    <p className={"text-neutral-600"}>{list.cards.length} words</p>
+                </div>
+                <div className={"flex gap-2"}>
+                    <Link to={"learn"}>
+                        <Button><Play /> Practice all words</Button>
+                    </Link>
+                </div>
             </div>
+
+            <Separator />
 
             <div className={"flex flex-col gap-4"}>
                 <h2 className={"font-bold text-xl"}>Cards</h2>
+
+                <div className={"flex gap-2"}>
+                    <Switch checked={shuffle} onCheckedChange={setShuffle} id={"shuffle"} />
+                    <Label htmlFor={"shuffle"}>Shuffle cards</Label>
+                </div>
 
                 <Carousel setApi={setCarouselApi} className="w-auto mx-12">
                     <CarouselContent>
@@ -67,11 +85,6 @@ export default function List({ params }: Route.ComponentProps) {
                     <CarouselPrevious />
                     <CarouselNext />
                 </Carousel>
-
-                <div className={"flex gap-2"}>
-                    <Switch checked={shuffle} onCheckedChange={setShuffle} id={"shuffle"} />
-                    <Label htmlFor={"shuffle"}>Shuffle cards</Label>
-                </div>
             </div>
 
         </div>
