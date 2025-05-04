@@ -41,11 +41,15 @@ const languages = [
     }
 ]
 
+export function getLanguageIcon(language: string) {
+    return `data:image/svg+xml;utf8,${encodeURIComponent(CountryFlagSvg[language])}`
+}
+
 function LanguageRender({ language }: { language?: { value: string, label: string } }) {
     if (!language) return
     return (
         <div className={"flex gap-2"}>
-            <img className={"aspect-square rounded-full h-5 object-cover"} src={`data:image/svg+xml;utf8,${encodeURIComponent(CountryFlagSvg[language.value])}`} />
+            <img className={"aspect-square rounded-full h-5 object-cover"} src={getLanguageIcon(language.value)} />
             {language.label}
         </div>
     )
