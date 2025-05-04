@@ -16,7 +16,7 @@ import {Label} from "@/components/ui/label";
 import {Button} from "@/components/ui/button";
 import {Link, useNavigate} from "react-router";
 import {Separator} from "@/components/ui/separator";
-import {Edit, Pen, Play} from "lucide-react";
+import {Edit, Pen, Play, RefreshCw} from "lucide-react";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 
 export function meta({}: Route.MetaArgs) {
@@ -40,6 +40,7 @@ export default function List({ params }: Route.ComponentProps) {
     const [carouselApi, setCarouselApi] = useState<CarouselApi>()
     const [current, setCurrent] = useState<number>(0)
     const [shuffle, setShuffle] = useState(false)
+    const session = useQuery(api.learnSessions.getForList, { list: params.id })
 
     useEffect(() => {
         if (!carouselApi) return
@@ -70,10 +71,15 @@ export default function List({ params }: Route.ComponentProps) {
                     <p className={"text-neutral-600"}>{list.cards.length} words</p>
                 </div>
                 <div className={"flex gap-2"}>
-                    <Button onClick={learn}><Play /> Practice all words</Button>
                     <Link to={"edit"}>
                         <Button><Pen /></Button>
                     </Link>
+                    <Button onClick={learn}><Play /> Practice all words</Button>
+                    {session && (
+                        <Link to={`/learn/${session._id}`}>
+                            <Button variant={"secondary"}><RefreshCw /> Continue learning</Button>
+                        </Link>
+                    )}
                 </div>
             </div>
 

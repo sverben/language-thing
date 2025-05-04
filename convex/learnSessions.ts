@@ -119,3 +119,16 @@ export const next = mutation({
         }
     }
 })
+
+export const getForList = query({
+    args: {
+        list: v.string()
+    },
+    async handler(ctx, args) {
+        const identity = await ensureIdentity(ctx)
+
+        return await ctx.db.query('learnSessions')
+            .filter(q => q.and(q.eq(q.field("list"), args.list), q.eq(q.field("owner"), identity.subject)))
+            .first()
+    }
+})
