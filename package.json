@@ -9,13 +9,16 @@
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
+    "@clerk/clerk-react": "^5.30.4",
     "@react-router/node": "^7.5.3",
     "@react-router/serve": "^7.5.3",
     "convex": "^1.24.0",
+    "convex-helpers": "^0.1.83",
     "isbot": "^5.1.27",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-router": "^7.5.3"
+    "react-router": "^7.5.3",
+    "zod": "^3.24.3"
   },
   "devDependencies": {
     "@react-router/dev": "^7.5.3",

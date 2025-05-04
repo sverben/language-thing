@@ -9,7 +9,9 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
-import {ConvexProvider, ConvexReactClient} from "convex/react";
+import {Authenticated, AuthLoading, ConvexProvider, ConvexReactClient, Unauthenticated} from "convex/react";
+import {ClerkProvider, useAuth, SignIn, UserButton} from "@clerk/clerk-react";
+import {ConvexProviderWithClerk} from "convex/react-clerk";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 
@@ -45,10 +47,22 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  console.log(import.meta.env)
   return (
-      <ConvexProvider client={convex}>
-        <Outlet />
-      </ConvexProvider>
+      <ClerkProvider publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY}>
+        <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
+          <Unauthenticated>
+            <SignIn />
+          </Unauthenticated>
+          <Authenticated>
+            <UserButton />
+            <Outlet />
+          </Authenticated>
+          <AuthLoading>
+            <h1>Loading...</h1>
+          </AuthLoading>
+        </ConvexProviderWithClerk>
+      </ClerkProvider>
   );
 }
 
