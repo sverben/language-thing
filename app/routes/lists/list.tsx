@@ -17,6 +17,7 @@ import {Button} from "@/components/ui/button";
 import {Link} from "react-router";
 import {Separator} from "@/components/ui/separator";
 import {Edit, Pen, Play} from "lucide-react";
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -90,6 +91,27 @@ export default function List({ params }: Route.ComponentProps) {
                 </Carousel>
             </div>
 
+            <div className={"flex flex-col gap-4"}>
+                <h2 className={"font-bold text-xl"}>Words</h2>
+
+                <Card className={"py-0"}>
+                    <CardContent>
+                        {list.cards.map((card, index) => (
+                            <div key={index}>
+                                <div className={"flex"}>
+                                    <div className={"flex-1 py-4"}>{card.wordA}</div>
+                                    <div className={"flex-1 p-4"}>{card.wordB}</div>
+                                </div>
+                                {list.cards.length - 1 !== index && (
+                                    <div className={"-mx-6"}>
+                                        <Separator />
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </CardContent>
+                </Card>
+            </div>
         </div>
     );
 }
