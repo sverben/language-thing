@@ -3,7 +3,7 @@ import {Outlet} from "react-router";
 
 export default function Layout() {
     return (
-        <div className={'flex flex-col h-screen'}>
+        <div className={'flex flex-col'}>
             <NavBar />
             <main className={'p-4 w-full max-w-7xl mx-auto flex-1'}>
                 <Outlet />
