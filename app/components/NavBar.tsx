@@ -1,4 +1,4 @@
-import {Link} from "react-router";
+import {Link, NavLink} from "react-router";
 import {UserButton} from "@clerk/clerk-react";
 import {Button} from "@/components/ui/button";
 import {Plus} from "lucide-react";
@@ -8,10 +8,12 @@ export default function NavBar() {
         <div className={"flex justify-center bg-neutral-200"}>
             <div className={"p-4 flex justify-between items-center w-full max-w-7xl mx-auto"}>
                 <div className={"flex gap-4 items-center"}>
-                    <Link to={"/"}>Home</Link>
+                    <NavLink to={"/"} className={({ isActive }) => `${isActive ? 'font-bold' : ''}`}>Home</NavLink>
                 </div>
                 <div className={"flex gap-4 items-center"}>
-                    <Button><Plus /> Create</Button>
+                    <Link to={"/create"}>
+                        <Button><Plus /> Create</Button>
+                    </Link>
                     <UserButton />
                 </div>
             </div>

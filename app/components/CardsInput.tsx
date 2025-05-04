@@ -61,7 +61,6 @@ export default function CardsInput({ value, onChange }: Props) {
         if (focus === null || !componentRef.current) return
 
         const element = componentRef.current.children[focus]
-        console.log(element)
         if (!(element instanceof HTMLDivElement)) return
 
         element.querySelector('input')?.focus()
