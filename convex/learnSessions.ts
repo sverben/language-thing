@@ -1,9 +1,10 @@
 import {v} from "convex/values";
 import {internalMutation, mutation, query} from "./_generated/server";
 import {internal} from "./_generated/api";
-import {ensureIdentity, shuffleArray} from "./utils";
+import {ensureIdentity, shuffleArray, zodMutation} from "./utils";
 import type {GenericMutationCtx} from "convex/server";
 import type {DataModel} from "./_generated/dataModel";
+import {updateSettingsSchema} from "@shared/schemas";
 
 const MAX_CURRENT = 6
 
@@ -81,6 +82,21 @@ export const create = mutation({
         await ctx.runMutation(internal.learnSessions.queue, ({ session }))
 
         return session
+    }
+})
+
+export const updateSettings = zodMutation({
+    args: updateSettingsSchema,
+    async handler(ctx, args) {
+        const session = await getSession(ctx, args.session)
+
+        await ctx.db.patch(session._id, {
+            remaining: shuffleArray(session.allCards),
+            rounds: [],
+
+            enabledRoundTypes: args.enabledRoundTypes
+        })
+        await ctx.runMutation(internal.learnSessions.queue, ({ session: session._id }))
     }
 })
 

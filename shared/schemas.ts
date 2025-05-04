@@ -13,3 +13,11 @@ export const createListSchema = z.object({
 export const updateListSchema = createListSchema.extend({
     id: z.string(),
 })
+
+export const settingsSchema = z.object({
+    enabledRoundTypes: z.array(z.string())
+})
+
+export const updateSettingsSchema = settingsSchema.extend({
+    session: z.string(),
+})
