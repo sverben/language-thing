@@ -10,6 +10,11 @@ export default [
             route("edit", "routes/lists/edit.tsx"),
         ])
     ]),
-    route("learn/:id", "routes/learn.tsx"),
 
+    ...prefix("learn/:id", [
+        index("routes/learn/learn.tsx"),
+        layout("routes/layout.tsx", { id: "learn/layout" }, [
+            route("summary", "routes/learn/summary.tsx")
+        ])
+    ])
 ] satisfies RouteConfig;

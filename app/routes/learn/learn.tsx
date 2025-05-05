@@ -1,33 +1,22 @@
 import type {Route} from "./+types/learn";
 import {useMutation, useQuery} from "convex/react";
-import {api} from "../../convex/_generated/api";
-import {type JSX, useMemo, useState} from "react";
+import {api} from "../../../convex/_generated/api";
+import {type JSX, useEffect, useMemo, useState} from "react";
 import {Card, CardContent} from "@/components/ui/card";
-import {type cardSchema, settingsSchema, updateSettingsSchema} from "@shared/schemas";
+import {type cardSchema, settingsSchema} from "@shared/schemas";
 import type {Props} from "@/components/learnRounds/types";
 import Write from "@/components/learnRounds/Write";
 import Choose from "@/components/learnRounds/Choose";
 import Show from "@/components/learnRounds/Show";
 import Hints from "@/components/learnRounds/Hints";
 import {Progress} from "@/components/ui/progress";
-import {
-    Check,
-    CheckCircle,
-    CheckCircle2,
-    ChevronLeft,
-    CogIcon,
-    SeparatorHorizontal,
-    SettingsIcon,
-    X
-} from "lucide-react";
+import {Check, ChevronLeft, SettingsIcon, X} from "lucide-react";
 import {Link, useNavigate} from "react-router";
 import {Separator} from "@/components/ui/separator";
 import {Button} from "@/components/ui/button";
 import {Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
-import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
 import {Label} from "@/components/ui/label";
-import {Textarea} from "@/components/ui/textarea";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import type {FunctionReturnType} from "convex/server";
@@ -171,12 +160,17 @@ export default function Learn({ params }: Route.ComponentProps) {
     const session = useQuery(api.learnSessions.get, { id: params.id })
     const next = useMutation(api.learnSessions.next)
 
+    useEffect(() => {
+        if (!session?.done) return
+
+        navigate(`/learn/${session._id}/summary`)
+    }, [session?.done])
+
     async function answer(correct: boolean) {
-        const done = await next({
+        await next({
             session: params.id,
             correct
         })
-        if (done) navigate(`/lists/${session?.list}`)
     }
 
     const done = useMemo(() => session && session.allCards.length - session.remaining.length - session.rounds.filter(round => round.kind === 'item').length, [session])

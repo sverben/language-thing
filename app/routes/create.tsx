@@ -1,14 +1,7 @@
 import type {Route} from "./+types/create";
-import {useForm} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
 import {createListSchema} from "@shared/schemas";
-import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {useMutation} from "convex/react";
 import {api} from "../../convex/_generated/api";
-import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
-import CardsInput from "@/components/listEditor/CardsInput";
-import ImportCards from "@/components/listEditor/ImportCards";
 import {useNavigate} from "react-router";
 import Editor from "@/components/listEditor/Editor";
 

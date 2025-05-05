@@ -21,6 +21,7 @@ import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {LanguageRender, languages} from "@/components/LanguageSelector";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import type {createLearnSchema} from "@shared/schemas";
+import LearnButton from "@/components/LearnButton";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -37,8 +38,6 @@ function shuffleArray<Type>(array: Type[]): Type[] {
 }
 
 export default function List({ params }: Route.ComponentProps) {
-    const navigate = useNavigate();
-    const createLearningSession = useMutation(api.learnSessions.create)
     const list = useQuery(api.lists.get, { id: params.id })
     const [carouselApi, setCarouselApi] = useState<CarouselApi>()
     const [current, setCurrent] = useState<number>(0)
@@ -53,15 +52,6 @@ export default function List({ params }: Route.ComponentProps) {
             setCurrent(carouselApi.selectedScrollSnap())
         })
     }, [carouselApi]);
-
-    async function learn(type: typeof createLearnSchema._type['type']) {
-        const id = await createLearningSession({
-            list: params.id,
-            type,
-        })
-
-        navigate(`/learn/${id}`)
-    }
 
     const cards = useMemo(() => shuffle ? shuffleArray(list?.cards || []) : list?.cards || [], [list?.cards, shuffle])
 
@@ -79,15 +69,7 @@ export default function List({ params }: Route.ComponentProps) {
                         <Button><Pen /></Button>
                     </Link>
 
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button><Play /> Practice all words</Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            <DropdownMenuItem onClick={() => learn('learn')}><RefreshCw /> Learn</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => learn('test')}><Pencil /> Test</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                   <LearnButton list={list._id} />
 
                     {session && (
                         <Link to={`/learn/${session._id}`}>
