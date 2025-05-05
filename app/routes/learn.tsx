@@ -11,7 +11,7 @@ import Show from "@/components/learnRounds/Show";
 import Hints from "@/components/learnRounds/Hints";
 import {Progress} from "@/components/ui/progress";
 import {Check, CheckCircle, CheckCircle2, ChevronLeft, CogIcon, SeparatorHorizontal, SettingsIcon} from "lucide-react";
-import {Link} from "react-router";
+import {Link, useNavigate} from "react-router";
 import {Separator} from "@/components/ui/separator";
 import {Button} from "@/components/ui/button";
 import {Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
@@ -156,14 +156,16 @@ function Settings({ session }: { session: FunctionReturnType<typeof api.learnSes
 }
 
 export default function Learn({ params }: Route.ComponentProps) {
+    const navigate = useNavigate();
     const session = useQuery(api.learnSessions.get, { id: params.id })
     const next = useMutation(api.learnSessions.next)
 
     async function answer(correct: boolean) {
-        await next({
+        const done = await next({
             session: params.id,
             correct
         })
+        if (done) navigate(`/lists/${session?.list}`)
     }
 
     const done = useMemo(() => session && session.allCards.length - session.remaining.length - session.rounds.filter(round => round.kind === 'item').length, [session])

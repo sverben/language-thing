@@ -55,6 +55,20 @@ export const queue = internalMutation({
             rounds: session.rounds,
             remaining: session.remaining
         })
+        return true
+    }
+})
+
+export const checkEnded = internalMutation({
+    args: {
+        session: v.id("learnSessions")
+    },
+    async handler(ctx, args) {
+        const session = await getSession(ctx, args.session)
+        if (session.rounds.find(e => e.kind === 'item')) return false
+
+        await ctx.db.delete(session._id)
+        return true
     }
 })
 
@@ -126,7 +140,7 @@ export const next = mutation({
         session: v.string(),
         correct: v.boolean()
     },
-    async handler(ctx, args) {
+    async handler(ctx, args): Promise<boolean> {
         const session = await getSession(ctx, args.session)
 
         const round = session.rounds.shift()
@@ -150,6 +164,10 @@ export const next = mutation({
                 session: session._id
             })
         }
+
+        return await ctx.runMutation(internal.learnSessions.checkEnded, {
+            session: session._id
+        })
     }
 })
 
