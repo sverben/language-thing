@@ -10,7 +10,16 @@ import Choose from "@/components/learnRounds/Choose";
 import Show from "@/components/learnRounds/Show";
 import Hints from "@/components/learnRounds/Hints";
 import {Progress} from "@/components/ui/progress";
-import {Check, CheckCircle, CheckCircle2, ChevronLeft, CogIcon, SeparatorHorizontal, SettingsIcon} from "lucide-react";
+import {
+    Check,
+    CheckCircle,
+    CheckCircle2,
+    ChevronLeft,
+    CogIcon,
+    SeparatorHorizontal,
+    SettingsIcon,
+    X
+} from "lucide-react";
 import {Link, useNavigate} from "react-router";
 import {Separator} from "@/components/ui/separator";
 import {Button} from "@/components/ui/button";
@@ -111,35 +120,37 @@ function Settings({ session }: { session: FunctionReturnType<typeof api.learnSes
                                 )}
                             />
 
-                            <FormField
-                                control={form.control}
-                                name="enabledRoundTypes"
-                                render={({ field }) => (
-                                    <FormItem className={"space-y-2"}>
-                                        <FormLabel>Learn using</FormLabel>
-                                        <FormControl>
-                                            <div className={"grid grid-cols-2 gap-4"}>
-                                                {roundList.map(roundType => (
-                                                    <div key={roundType.id} className={"flex gap-2"}>
-                                                        <Checkbox
-                                                            checked={field.value.includes(roundType.id)}
-                                                            onCheckedChange={checked => {
-                                                                if (!checked) return field.onChange(field.value.filter(e => e !== roundType.id))
+                            {session.type === 'learn' && (
+                                <FormField
+                                    control={form.control}
+                                    name="enabledRoundTypes"
+                                    render={({ field }) => (
+                                        <FormItem className={"space-y-2"}>
+                                            <FormLabel>Learn using</FormLabel>
+                                            <FormControl>
+                                                <div className={"grid grid-cols-2 gap-4"}>
+                                                    {roundList.map(roundType => (
+                                                        <div key={roundType.id} className={"flex gap-2"}>
+                                                            <Checkbox
+                                                                checked={field.value.includes(roundType.id)}
+                                                                onCheckedChange={checked => {
+                                                                    if (!checked) return field.onChange(field.value.filter(e => e !== roundType.id))
 
-                                                                const enabled = [...field.value, roundType.id]
-                                                                field.onChange(roundList.map(e => e.id).filter(e => enabled.includes(e)));
-                                                            }}
-                                                            id={roundType.id}
-                                                        />
-                                                        <Label htmlFor={roundType.id}>{roundType.name}</Label>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                                                                    const enabled = [...field.value, roundType.id]
+                                                                    field.onChange(roundList.map(e => e.id).filter(e => enabled.includes(e)));
+                                                                }}
+                                                                id={roundType.id}
+                                                            />
+                                                            <Label htmlFor={roundType.id}>{roundType.name}</Label>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            )}
 
                             <div className="flex items-center gap-2">
                                 <Button type="submit">Update and restart</Button>
@@ -185,11 +196,17 @@ export default function Learn({ params }: Route.ComponentProps) {
                     <div className={"flex items-center flex-1 gap-4"}>
                         <Progress className={"h-5 flex-1"} value={done / session.allCards.length * 100} />
                         <div>{session.allCards.length - done} to go</div>
-                        <div className={"flex gap-1 items-center"}>
-                            <div className={"bg-primary aspect-square rounded-full p-0.5 text-white"}>
+                        <div className={"flex gap-1.5 items-center"}>
+                            <div className={"bg-green-500 aspect-square rounded-full p-0.5 text-white"}>
                                 <Check size={20} />
                             </div>
-                            {done}
+                            {session.correct.length}
+                        </div>
+                        <div className={"flex gap-1.5 items-center"}>
+                            <div className={"bg-red-500 aspect-square rounded-full p-0.5 text-white"}>
+                                <X size={20} />
+                            </div>
+                            {session.incorrect.length}
                         </div>
                     </div>
                     <Separator orientation="vertical" />

@@ -21,6 +21,10 @@ export default defineSchema({
         languageA: v.string(),
         languageB: v.string(),
 
+        correct: v.array(card),
+        incorrect: v.array(card),
+        done: v.boolean(),
+
         allCards: v.array(card),
         remaining: v.array(card),
         rounds: v.array(
@@ -28,6 +32,7 @@ export default defineSchema({
                 v.object({
                     kind: v.literal("item"),
                     round: v.number(),
+                    repetition: v.boolean(),
                     card
                 }),
                 v.object({
@@ -36,6 +41,7 @@ export default defineSchema({
             )
         ),
 
+        type: v.union(v.literal("learn"), v.literal("test")),
         enabledRoundTypes: v.array(v.string()),
         answerIn: v.union(v.literal("a"), v.literal("b")),
     })

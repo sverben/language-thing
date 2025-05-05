@@ -24,3 +24,8 @@ export const settingsSchema = z.object({
 export const updateSettingsSchema = settingsSchema.extend({
     session: z.string(),
 })
+
+export const createLearnSchema = z.object({
+    list: z.string(),
+    type: z.enum(["learn", "test"])
+})

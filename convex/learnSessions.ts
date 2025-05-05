@@ -4,7 +4,7 @@ import {internal} from "./_generated/api";
 import {ensureIdentity, shuffleArray, zodMutation} from "./utils";
 import type {GenericMutationCtx} from "convex/server";
 import type {DataModel} from "./_generated/dataModel";
-import {updateSettingsSchema} from "@shared/schemas";
+import {createLearnSchema, updateSettingsSchema} from "@shared/schemas";
 
 const MAX_CURRENT = 6
 
@@ -44,6 +44,7 @@ export const queue = internalMutation({
             session.rounds.push({
                 kind: "item",
                 round: 0,
+                repetition: false,
                 card: next
             })
         }
@@ -55,7 +56,6 @@ export const queue = internalMutation({
             rounds: session.rounds,
             remaining: session.remaining
         })
-        return true
     }
 })
 
@@ -67,15 +67,26 @@ export const checkEnded = internalMutation({
         const session = await getSession(ctx, args.session)
         if (session.rounds.find(e => e.kind === 'item')) return false
 
-        await ctx.db.delete(session._id)
+        await ctx.db.patch(session._id, {
+            done: true
+        })
         return true
     }
 })
 
-export const create = mutation({
-    args: {
-        list: v.string(),
-    },
+function getDefaultEnabledRoundTypes(type: typeof createLearnSchema._type['type']) {
+    switch (type) {
+        case 'learn': {
+            return ['show', 'choose', 'hints', 'write']
+        }
+        case 'test': {
+            return ['write']
+        }
+    }
+}
+
+export const create = zodMutation({
+    args: createLearnSchema,
     async handler(ctx, args) {
         const identity = await ensureIdentity(ctx)
 
@@ -94,6 +105,10 @@ export const create = mutation({
             list: list._id,
             owner: identity.subject,
 
+            correct: [],
+            incorrect: [],
+            done: false,
+
             languageA: list.languageA,
             languageB: list.languageB,
 
@@ -101,7 +116,8 @@ export const create = mutation({
             remaining: shuffleArray(list.cards),
             rounds: [],
 
-            enabledRoundTypes: ['show', 'choose', 'hints', 'write'],
+            type: args.type,
+            enabledRoundTypes: getDefaultEnabledRoundTypes(args.type),
             answerIn: 'b'
         })
         await ctx.runMutation(internal.learnSessions.queue, ({ session }))
@@ -118,6 +134,10 @@ export const updateSettings = zodMutation({
         await ctx.db.patch(session._id, {
             remaining: shuffleArray(session.allCards),
             rounds: [],
+
+            correct: [],
+            incorrect: [],
+            done: false,
 
             enabledRoundTypes: args.enabledRoundTypes,
             answerIn: args.answerIn
@@ -148,16 +168,24 @@ export const next = mutation({
         if (round.kind !== 'item') throw new Error('Round uses invalid type')
 
         if (!args.correct) {
+            if (round.round === session.enabledRoundTypes.length - 1 && !round.repetition) {
+                round.repetition = true
+                session.incorrect.push(round.card)
+            }
             session.rounds.push(round)
         } else if (round.round < session.enabledRoundTypes.length - 1) {
             session.rounds.push({
                 ...round,
                 round: round.round + 1
             })
+        } else if (!round.repetition) {
+            session.correct.push(round.card)
         }
 
         await ctx.db.patch(session._id, {
-            rounds: session.rounds
+            rounds: session.rounds,
+            correct: session.correct,
+            incorrect: session.incorrect
         })
         if (session.rounds[0].kind === 'queue') {
             await ctx.runMutation(internal.learnSessions.queue, {

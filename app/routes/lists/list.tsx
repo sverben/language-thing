@@ -16,9 +16,11 @@ import {Label} from "@/components/ui/label";
 import {Button} from "@/components/ui/button";
 import {Link, useNavigate} from "react-router";
 import {Separator} from "@/components/ui/separator";
-import {Edit, Pen, Play, RefreshCw} from "lucide-react";
+import {Edit, Pen, Pencil, Play, RefreshCw} from "lucide-react";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {LanguageRender, languages} from "@/components/LanguageSelector";
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
+import type {createLearnSchema} from "@shared/schemas";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -52,9 +54,10 @@ export default function List({ params }: Route.ComponentProps) {
         })
     }, [carouselApi]);
 
-    async function learn() {
+    async function learn(type: typeof createLearnSchema._type['type']) {
         const id = await createLearningSession({
-            list: params.id
+            list: params.id,
+            type,
         })
 
         navigate(`/learn/${id}`)
@@ -75,10 +78,20 @@ export default function List({ params }: Route.ComponentProps) {
                     <Link to={"edit"}>
                         <Button><Pen /></Button>
                     </Link>
-                    <Button onClick={learn}><Play /> Practice all words</Button>
+
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button><Play /> Practice all words</Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuItem onClick={() => learn('learn')}><RefreshCw /> Learn</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => learn('test')}><Pencil /> Test</DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
                     {session && (
                         <Link to={`/learn/${session._id}`}>
-                            <Button variant={"secondary"}><RefreshCw /> Continue learning</Button>
+                            <Button variant={"secondary"}><RefreshCw /> Continue {session.type}</Button>
                         </Link>
                     )}
                 </div>
