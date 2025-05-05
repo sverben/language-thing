@@ -18,6 +18,7 @@ import {Link, useNavigate} from "react-router";
 import {Separator} from "@/components/ui/separator";
 import {Edit, Pen, Play, RefreshCw} from "lucide-react";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
+import {LanguageRender, languages} from "@/components/LanguageSelector";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -109,7 +110,20 @@ export default function List({ params }: Route.ComponentProps) {
             <div className={"flex flex-col gap-4"}>
                 <h2 className={"font-bold text-xl"}>Words</h2>
 
-                <Card className={"py-0"}>
+                <Card className={"gap-0"}>
+                    <CardHeader>
+                        <div className="flex mb-4">
+                            <div className="flex-1 font-bold">
+                                <LanguageRender code={list.languageA} />
+                            </div>
+                            <div className="flex-1 font-bold">
+                                <LanguageRender code={list.languageB} />
+                            </div>
+                        </div>
+                        <div className={"-mx-6"}>
+                            <Separator />
+                        </div>
+                    </CardHeader>
                     <CardContent>
                         {list.cards.map((card, index) => (
                             <div key={index}>

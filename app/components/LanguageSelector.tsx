@@ -17,6 +17,7 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import CountryFlagSvg from "country-list-with-dial-code-and-flag/dist/flag-svg";
+import {useMemo} from "react";
 
 export const languages = [
     {
@@ -50,12 +51,14 @@ export function getLanguageIcon(language: string) {
     return `data:image/svg+xml;utf8,${encodeURIComponent(CountryFlagSvg[language])}`
 }
 
-function LanguageRender({ language }: { language?: { value: string, label: string, code: string } }) {
-    if (!language) return
+export function LanguageRender({ language, code }: { language?: { value: string, label: string, code: string }, code?: string }) {
+    const detail = useMemo(() => language || languages.find(e => e.code === code), [language, code])
+
+    if (!detail) return
     return (
         <div className={"flex gap-2"}>
-            <img className={"aspect-square rounded-full h-5 object-cover"} src={getLanguageIcon(language.code)} />
-            {language.label}
+            <img className={"aspect-square rounded-full h-5 object-cover"} src={getLanguageIcon(detail.code)} />
+            {detail.label}
         </div>
     )
 }
